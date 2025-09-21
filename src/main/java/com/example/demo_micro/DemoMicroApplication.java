@@ -1,4 +1,4 @@
-package com.example.demo-micro;
+package com.example.demo_micro;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
