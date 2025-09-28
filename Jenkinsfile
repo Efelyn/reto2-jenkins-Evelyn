@@ -55,7 +55,7 @@ pipeline {
         }
       }
     }
-
+    
   post {
     success {
       echo "Imagen publicada: ${env.REGISTRY}/${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}:${env.BUILD_NUMBER}"
@@ -64,5 +64,4 @@ pipeline {
       echo "Build fallido. Revisar logs."
     }
   }
-}
 }
