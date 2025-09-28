@@ -43,7 +43,10 @@ pipeline {
           // 1. BUILD: Usamos la ruta absoluta para que encuentre el binario Docker.
           sh "/usr/bin/docker build -t ${FULL_IMAGE_NAME}:${tag} ."
 
-          // 2. PUSH: Nos autenticamos y subimos usando la ruta absoluta.
+          // 2. TAG: Crea la etiqueta 'latest' apuntando a la imagen recién construida
+          sh "/usr/bin/docker tag ${IMAGE_WITH_TAG} ${IMAGE_LATEST}" // <--- ¡Esta línea faltaba!
+
+          // 3 PUSH: Nos autenticamos y subimos usando la ruta absoluta.
           withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', 
                                            usernameVariable: 'DOCKER_USERNAME', 
                                            passwordVariable: 'DOCKER_PASSWORD')]){
