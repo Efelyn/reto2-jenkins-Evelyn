@@ -55,6 +55,7 @@ pipeline {
         }
       }
     }
+  }
     
   post {
     success {
@@ -64,4 +65,3 @@ pipeline {
       echo "Build fallido. Revisar logs."
     }
   }
-}
