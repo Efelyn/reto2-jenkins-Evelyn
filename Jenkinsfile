@@ -44,9 +44,11 @@ pipeline {
           sh "/usr/bin/docker build -t ${FULL_IMAGE_NAME}:${tag} ."
 
           // 2. PUSH: Nos autenticamos y subimos usando la ruta absoluta.
-          withCredentials([string(credentialsId: 'dockerhub-creds', variable: 'DOCKER_PASSWORD')]) {
-              // Login
-              sh "/usr/bin/docker login -u ${env.DOCKERHUB_NAMESPACE} -p ${DOCKER_PASSWORD}"
+          withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', 
+                                           usernameVariable: 'DOCKER_USERNAME', 
+                                           passwordVariable: 'DOCKER_PASSWORD')]){
+              // Docker login usa el usuario y contraseña extraídos
+              sh "/usr/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
               // Push Tagged
               sh "/usr/bin/docker push ${FULL_IMAGE_NAME}:${tag}"
               // Push Latest
