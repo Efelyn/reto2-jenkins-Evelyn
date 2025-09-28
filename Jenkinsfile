@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent docker-agent
 
   environment {
     IMAGE_NAME = "demo-micro"
