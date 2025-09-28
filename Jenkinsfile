@@ -2,7 +2,7 @@ pipeline {
   agent { label 'docker-agent' }
 
   environment {
-    IMAGE_NAME = "demo-micro"
+    IMAGE_NAME = "demo-micro-jenkins"
     DOCKERHUB_NAMESPACE = "evelynandrade"         
     REGISTRY = "docker.io"
     JAVA_HOME = tool name: 'JDK17', type: 'hudson.model.JDK'
