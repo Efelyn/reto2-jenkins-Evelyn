@@ -65,3 +65,4 @@ pipeline {
       echo "Build fallido. Revisar logs."
     }
   }
+}
