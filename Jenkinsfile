@@ -1,5 +1,5 @@
 pipeline {
-  agent docker-agent
+  agent { label 'docker-agent' }
 
   environment {
     IMAGE_NAME = "demo-micro"
