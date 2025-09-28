@@ -34,28 +34,35 @@ pipeline {
       }
     }
 
-    stage('Build & Push Image') {
+stage('Build & Push Image') {
       steps {
         script {
+          // --- DEFINICIÓN DE VARIABLES ---
           def tag = env.BUILD_NUMBER
           def FULL_IMAGE_NAME = "${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}"
+          
+          def IMAGE_WITH_TAG = "${FULL_IMAGE_NAME}:${tag}" 
+          def IMAGE_LATEST = "${FULL_IMAGE_NAME}:latest" 
+          // -------------------------------
+          
+          // 1. BUILD: Usa la variable corregida IMAGE_WITH_TAG
+          sh "/usr/bin/docker build -t ${IMAGE_WITH_TAG} ."
 
-          // 1. BUILD: Usamos la ruta absoluta para que encuentre el binario Docker.
-          sh "/usr/bin/docker build -t ${FULL_IMAGE_NAME}:${tag} ."
+          // 2. TAG: Usa ambas variables
+          sh "/usr/bin/docker tag ${IMAGE_WITH_TAG} ${IMAGE_LATEST}"
 
-          // 2. TAG: Crea la etiqueta 'latest' apuntando a la imagen recién construida
-          sh "/usr/bin/docker tag ${IMAGE_WITH_TAG} ${IMAGE_LATEST}" // <--- ¡Esta línea faltaba!
-
-          // 3 PUSH: Nos autenticamos y subimos usando la ruta absoluta.
+          // 3 PUSH: 
           withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', 
                                            usernameVariable: 'DOCKER_USERNAME', 
                                            passwordVariable: 'DOCKER_PASSWORD')]){
-              // Docker login usa el usuario y contraseña extraídos
+              
               sh "/usr/bin/docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-              // Push Tagged
-              sh "/usr/bin/docker push ${FULL_IMAGE_NAME}:${tag}"
-              // Push Latest
-              sh "/usr/bin/docker push ${FULL_IMAGE_NAME}:latest"
+              
+              // Push Tagged (Usamos IMAGE_WITH_TAG)
+              sh "/usr/bin/docker push ${IMAGE_WITH_TAG}" 
+              
+              // Push Latest (Usamos IMAGE_LATEST)
+              sh "/usr/bin/docker push ${IMAGE_LATEST}"
           }
         }
       }
