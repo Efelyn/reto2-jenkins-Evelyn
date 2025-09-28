@@ -38,10 +38,19 @@ pipeline {
       steps {
         script {
           def tag = env.BUILD_NUMBER
-          def image = docker.build("${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}:${tag}")
-          docker.withRegistry("https://${REGISTRY}", 'dockerhub-creds') {
-            image.push()
-            image.push('latest')
+          def FULL_IMAGE_NAME = "${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}"
+
+          // 1. BUILD: Usamos la ruta absoluta para que encuentre el binario Docker.
+          sh "/usr/bin/docker build -t ${FULL_IMAGE_NAME}:${tag} ."
+
+          // 2. PUSH: Nos autenticamos y subimos usando la ruta absoluta.
+          withCredentials([string(credentialsId: 'dockerhub-creds', variable: 'DOCKER_PASSWORD')]) {
+              // Login
+              sh "/usr/bin/docker login -u ${env.DOCKERHUB_NAMESPACE} -p ${DOCKER_PASSWORD}"
+              // Push Tagged
+              sh "/usr/bin/docker push ${FULL_IMAGE_NAME}:${tag}"
+              // Push Latest
+              sh "/usr/bin/docker push ${FULL_IMAGE_NAME}:latest"
           }
         }
       }
